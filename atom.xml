@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[My Octopress Blog]]></title>
+  <link href="http://shuixiya1999.github.io/atom.xml" rel="self"/>
+  <link href="http://shuixiya1999.github.io/"/>
+  <updated>2013-08-08T09:41:48+08:00</updated>
+  <id>http://shuixiya1999.github.io/</id>
+  <author>
+    <name><![CDATA[Yaos]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ruby对象的比较]]></title>
+    <link href="http://shuixiya1999.github.io/blog/2013/08/08/zhong-wen/"/>
+    <updated>2013-08-08T08:45:00+08:00</updated>
+    <id>http://shuixiya1999.github.io/blog/2013/08/08/zhong-wen</id>
+    <content type="html"><![CDATA[<ol>
+<li>equal?</li>
+<li>eql?</li>
+<li>==</li>
+<li>===</li>
+<li>补充
+
+<ul>
+<li>==/=== 对Numerics对象的转换</li>
+<li>=== 并不是js中的===, 虽有<code>!=</code> 但是<em>没有</em><code>!==</code></li>
+<li>=== 在大多数情况下用于case语句。</li>
+<li>=~ 用来判断正则表达式的模式是否匹配。</li>
+</ul>
+</li>
+</ol>
+
+
+<!-- more -->
+
+
+<h3>1.equal?</h3>
+
+<p>用来比较两个<em>对象</em>是否相同</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">a</span> <span class="o">=</span> <span class="s2">&quot;Ruby&quot;</span>       <span class="c1"># 一个字符串对象。</span>
+</span><span class='line'><span class="n">b</span> <span class="o">=</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;Ruby&quot;</span>   <span class="c1"># 两个字符串对象指向动一个引用。</span>
+</span><span class='line'><span class="n">a</span><span class="o">.</span><span class="n">equal?</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>      <span class="c1"># false: a和b是不同的对象。</span>
+</span><span class='line'><span class="n">b</span><span class="o">.</span><span class="n">equal?</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>      <span class="c1"># true: b和c指向同一个引用。</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实原理就是 <em>比较对象id</em>
+<code>a.object_id == b.object_id   # 等同于 a.equal?(b)</code></p>
+
+<h3>2.eql?</h3>
+
+<p>与<code>equal?</code>完全一样, 缩写形式而已</p>
+
+<h3>3.==</h3>
+
+<p>用来比较两个<em>对象的内容</em>是否相同</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">a</span> <span class="o">==</span> <span class="n">b</span>          <span class="c1"># true: a和b的内容相同</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>4.===</h3>
+
+<p>基本与<code>==</code>相同, 但存在以下<em>特殊情况</em>:</p>
+
+<ul>
+<li>Range: 用于判断等号右边的对象是否包含于等号左边的Range</li>
+<li>正则表达式: 用于判断一个字符串是否匹配模式</li>
+<li>Class: 来判断一个对象是否为类的实例</li>
+<li>Symbol: 来判断等号两边的符号对象是否相同</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">5</span>    <span class="c1"># true: 5属于range 1..10</span>
+</span><span class='line'><span class="sr">/\d+/</span> <span class="o">===</span> <span class="s2">&quot;123&quot;</span>  <span class="c1"># true: 字符串匹配这个模式</span>
+</span><span class='line'><span class="nb">String</span> <span class="o">===</span> <span class="s2">&quot;s&quot;</span>   <span class="c1"># true: &quot;s&quot; 是一个字符串类的实例</span>
+</span><span class='line'><span class="ss">:s</span> <span class="o">===</span> <span class="s2">&quot;s&quot;</span>       <span class="c1"># true </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>5.补充</h3>
+
+<h4>==/=== 对Numerics对象的转换</h4>
+
+<h4>=== 并不是js中的===, 虽有<code>!=</code> 但是<em>没有</em><code>!==</code></h4>
+
+<h4>=== 在大多数情况下用于case语句。</h4>
+
+<h4>=~ 用来判断正则表达式的模式是否匹配。</h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://shuixiya1999.github.io/blog/2013/08/06/hello-world/"/>
+    <updated>2013-08-06T17:21:00+08:00</updated>
+    <id>http://shuixiya1999.github.io/blog/2013/08/06/hello-world</id>
+    <content type="html"><![CDATA[<h3>nani</h3>
+
+<h4>haha</h4>
+
+<ul>
+<li>youshiyou</li>
+<li>zheli</li>
+<li>name</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[title]]></title>
+    <link href="http://shuixiya1999.github.io/blog/2013/07/29/title/"/>
+    <updated>2013-07-29T10:35:00+08:00</updated>
+    <id>http://shuixiya1999.github.io/blog/2013/07/29/title</id>
+    <content type="html"><![CDATA[<p>简单介绍下nginx配置多个站点的情况。</p>
+
+<p>这里以配置2个站点（2个域名）为例，n 个站点可以相应增加调整，假设：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>IP地址: 202.55.1.100
+</span><span class='line'>域名1 example1.com 放在 /www/example1
+</span><span class='line'>域名2 example2.com 放在 /www/example2</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
+
+
+<ul>
+<li><a href="#hehe">呵呵链接</a>
+最简单的处理:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http {
+</span><span class='line'>  index index.html;
+</span><span class='line'> 
+</span><span class='line'>  server {
+</span><span class='line'>    server_name example1.com;
+</span><span class='line'>    root /www/example1;
+</span><span class='line'>  }
+</span><span class='line'> 
+</span><span class='line'>  server {
+</span><span class='line'>    server_name example2.com;
+</span><span class='line'>    root /www/example2;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但这样站点一多不好管理，可以给每个站点都创建一个单独的配置文件,主要是通过virtual去设置。</p>
+
+<p>配置 nginx virtual hosting 的基本思路和步骤如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>把2个站点 example1.com, example2.com 放到 nginx 可以访问的目录 /www/
+</span><span class='line'>给每个站点分别创建一个 nginx 配置文件 example1.com.conf，example2.com.conf, 并把配置文件放到 /etc/nginx/vhosts/
+</span><span class='line'>然后在 /etc/nginx.conf 里面加一句 include 把步骤2创建的配置文件全部包含进来（用 * 号）
+</span><span class='line'>重启 nginx</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看nginx.conf这个配置文件后，发现其实我们可以将每个站点的配置文件放在sites-enabled中即可</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  include /etc/nginx/conf.d/*.conf;
+</span><span class='line'>  include /etc/nginx/sites-enabled/*;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3 id="hehe">具体过程</h3>
+
+
+<h4>1、在 /etc/nginx/sites-available/ 里创建一个名字为 example1.conf 的文件，把以下内容拷进去</h4>
+
+<figure class='code'><figcaption><span>example1.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>server <span class="o">{</span>
+</span><span class='line'>  server_name example1.com;
+</span><span class='line'>
+</span><span class='line'>  root /www/example1;
+</span><span class='line'>  index index.html;
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>2、在 /etc/nginx/sites-available/ 里创建一个名字为 example2.conf 的文件，把以下内容拷进去</h4>
+
+<figure class='code'><figcaption><span>example2.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>server <span class="o">{</span>
+</span><span class='line'>  server_name example2.com;
+</span><span class='line'>
+</span><span class='line'>  root /www/example2;
+</span><span class='line'>  index index.html;
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>3、将之前的配置关联进sites-enabled</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /etc/nginx/sites-enabled
+</span><span class='line'>ls -l
+</span><span class='line'>sudo ln -s /etc/nginx/sites-available/example1.conf example1
+</span><span class='line'>sudo ln -s /etc/nginx/sites-available/example2.conf example2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>4、重启 Nginx</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /etc/init.d/nginx restart
+</span><span class='line'>or
+</span><span class='line'>sudo service nginx restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>想要立刻看到效果的话，可以在/etc/hosts中将域名指向本机，即可查看刚才配置的效果</p>
+
+<h4>参考:</h4>
+
+<ul>
+<li><a href="http://www.jb51.net/article/27533.htm">http://www.jb51.net/article/27533.htm</a></li>
+<li><a href="http://www.open-open.com/lib/view/open1347676848681.html">http://www.open-open.com/lib/view/open1347676848681.html</a></li>
+<li><a href="http://www.open-open.com/bbs/view/1319455592515">http://www.open-open.com/bbs/view/1319455592515</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

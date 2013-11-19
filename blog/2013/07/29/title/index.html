@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>title - My Octopress Blog</title>
+  <meta name="author" content="Yaos">
+
+  
+  <meta name="description" content="简单介绍下nginx配置多个站点的情况。 这里以配置2个站点（2个域名）为例，n 个站点可以相应增加调整，假设： 1
+2
+3
+IP地址: 202.55.1.100
+域名1 example1.com 放在 /www/example1
+域名2 example2.com 放在 /www/example2 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shuixiya1999.github.io/blog/2013/07/29/title">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:shuixiya1999.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Title</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-29T10:35:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>简单介绍下nginx配置多个站点的情况。</p>
+
+<p>这里以配置2个站点（2个域名）为例，n 个站点可以相应增加调整，假设：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>IP地址: 202.55.1.100
+</span><span class='line'>域名1 example1.com 放在 /www/example1
+</span><span class='line'>域名2 example2.com 放在 /www/example2</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
+
+
+<ul>
+<li><a href="#hehe">呵呵链接</a>
+最简单的处理:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http {
+</span><span class='line'>  index index.html;
+</span><span class='line'> 
+</span><span class='line'>  server {
+</span><span class='line'>    server_name example1.com;
+</span><span class='line'>    root /www/example1;
+</span><span class='line'>  }
+</span><span class='line'> 
+</span><span class='line'>  server {
+</span><span class='line'>    server_name example2.com;
+</span><span class='line'>    root /www/example2;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但这样站点一多不好管理，可以给每个站点都创建一个单独的配置文件,主要是通过virtual去设置。</p>
+
+<p>配置 nginx virtual hosting 的基本思路和步骤如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>把2个站点 example1.com, example2.com 放到 nginx 可以访问的目录 /www/
+</span><span class='line'>给每个站点分别创建一个 nginx 配置文件 example1.com.conf，example2.com.conf, 并把配置文件放到 /etc/nginx/vhosts/
+</span><span class='line'>然后在 /etc/nginx.conf 里面加一句 include 把步骤2创建的配置文件全部包含进来（用 * 号）
+</span><span class='line'>重启 nginx</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看nginx.conf这个配置文件后，发现其实我们可以将每个站点的配置文件放在sites-enabled中即可</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  include /etc/nginx/conf.d/*.conf;
+</span><span class='line'>  include /etc/nginx/sites-enabled/*;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3 id="hehe">具体过程</h3>
+
+
+<h4>1、在 /etc/nginx/sites-available/ 里创建一个名字为 example1.conf 的文件，把以下内容拷进去</h4>
+
+<figure class='code'><figcaption><span>example1.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>server <span class="o">{</span>
+</span><span class='line'>  server_name example1.com;
+</span><span class='line'>
+</span><span class='line'>  root /www/example1;
+</span><span class='line'>  index index.html;
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>2、在 /etc/nginx/sites-available/ 里创建一个名字为 example2.conf 的文件，把以下内容拷进去</h4>
+
+<figure class='code'><figcaption><span>example2.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>server <span class="o">{</span>
+</span><span class='line'>  server_name example2.com;
+</span><span class='line'>
+</span><span class='line'>  root /www/example2;
+</span><span class='line'>  index index.html;
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>3、将之前的配置关联进sites-enabled</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /etc/nginx/sites-enabled
+</span><span class='line'>ls -l
+</span><span class='line'>sudo ln -s /etc/nginx/sites-available/example1.conf example1
+</span><span class='line'>sudo ln -s /etc/nginx/sites-available/example2.conf example2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>4、重启 Nginx</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /etc/init.d/nginx restart
+</span><span class='line'>or
+</span><span class='line'>sudo service nginx restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>想要立刻看到效果的话，可以在/etc/hosts中将域名指向本机，即可查看刚才配置的效果</p>
+
+<h4>参考:</h4>
+
+<ul>
+<li><a href="http://www.jb51.net/article/27533.htm">http://www.jb51.net/article/27533.htm</a></li>
+<li><a href="http://www.open-open.com/lib/view/open1347676848681.html">http://www.open-open.com/lib/view/open1347676848681.html</a></li>
+<li><a href="http://www.open-open.com/bbs/view/1319455592515">http://www.open-open.com/bbs/view/1319455592515</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Yaos</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-29T10:35:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/08/06/hello-world/" title="Next Post: Hello World">Hello World &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/08/zhong-wen/">Ruby对象的比较</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/hello-world/">Hello World</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/title/">Title</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Yaos -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
